@@ -26,7 +26,7 @@ set -o pipefail
 ### CONSTANTES
 
 plugin="check_hpstoreeasy.sh"
-version="0.3.0"
+version="0.3.1"
 hpe_rest="/rest/"
 
 health_Ok=0
@@ -100,7 +100,8 @@ function my_version(){
 
 function read_parameters(){
 	if [[ $# -eq 0 ]]; then 
-		exit 1
+		my_help
+		exit $STATE_UNKNOWN
 	fi
 	while [[ $# -gt 0 ]]; do
 		key="$1"
