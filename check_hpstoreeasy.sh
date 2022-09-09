@@ -285,7 +285,6 @@ function check_SystemHardwareInfo(){
 	details=""
 	state=$STATE_UNKNOWN
 	
-	my_verbose "$jsonResult"
 	if total=$(echo $jsonResult | jq '.SystemHardwareList | length' 2>/dev/null); then
 		if [ $total -gt 0 ]; then
 			state=$STATE_OK
