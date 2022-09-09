@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # check_hpstoreeasy.sh checks HP StoreEasy Storages status.
-# Copyright (C) 2019  Ramón Román Castro <ramonromancastro@gmail.com>
+# Copyright (C) 2019-2022  Ramón Román Castro <ramonromancastro@gmail.com>
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ set -o pipefail
 ### CONSTANTES
 
 plugin="check_hpstoreeasy.sh"
-version="0.3.1"
+version="0.3.2"
 hpe_rest="/rest/"
 
 health_Ok=0
@@ -154,7 +154,7 @@ function check_PhysicalDisks(){
 	details=""
 	state=$STATE_UNKNOWN
 	
-	if total=$(echo $jsonResult | jq -r .total); then
+	if total=$(echo $jsonResult | jq -r .total 2>/dev/null); then
 		if [ $total -gt 0 ]; then
 			state=$STATE_OK
 			for (( index=0; index<${total}; index++ )); do
@@ -176,12 +176,12 @@ function check_PhysicalDisks(){
 				message="WARNING: ${alerts} of ${total} disks are in warning state"
 			fi
 		else
-			$message="OK: No disks detected"
-			$state=$STATE_UNKNOWN
+			message="OK: No disks detected"
+			state=$STATE_UNKNOWN
 		fi
 	else
-		$message="UNKNOWN: Error parsing json"
-		$state=$STATE_UNKNOWN
+		message="UNKNOWN: Error parsing json"
+		state=$STATE_UNKNOWN
 	fi
 
 	echo $message
@@ -198,7 +198,7 @@ function check_VirtualDisks(){
 	details=""
 	state=$STATE_UNKNOWN
 	
-	if total=$(echo $jsonResult | jq -r .total); then
+	if total=$(echo $jsonResult | jq -r .total 2>/dev/null); then
 		if [ $total -gt 0 ]; then
 			state=$STATE_OK
 			for (( index=0; index<${total}; index++ )); do
@@ -220,12 +220,12 @@ function check_VirtualDisks(){
 				message="WARNING: ${alerts} of ${total} virtual disks are in warning state"
 			fi
 		else
-			$message="OK: No disks detected"
-			$state=$STATE_UNKNOWN
+			message="OK: No disks detected"
+			state=$STATE_UNKNOWN
 		fi
 	else
-		$message="UNKNOWN: Error parsing json"
-		$state=$STATE_UNKNOWN
+		message="UNKNOWN: Error parsing json"
+		state=$STATE_UNKNOWN
 	fi
 
 	echo $message
@@ -242,7 +242,7 @@ function check_InterfaceInfo(){
 	details=""
 	state=$STATE_UNKNOWN
 	
-	if total=$(echo $jsonResult | jq '.NetworkObjectInterfaceList | length'); then
+	if total=$(echo $jsonResult | jq '.NetworkObjectInterfaceList | length' 2>/dev/null); then
 		if [ $total -gt 0 ]; then
 			state=$STATE_OK
 			for (( index=0; index<${total}; index++ )); do
@@ -263,12 +263,12 @@ function check_InterfaceInfo(){
 				message="WARNING: ${alerts} of ${total} network interfaces are in warning state"
 			fi
 		else
-			$message="OK: No network interfaces detected"
-			$state=$STATE_UNKNOWN
+			message="OK: No network interfaces detected"
+			state=$STATE_UNKNOWN
 		fi
 	else
-		$message="UNKNOWN: Error parsing json"
-		$state=$STATE_UNKNOWN
+		message="UNKNOWN: Error parsing json"
+		state=$STATE_UNKNOWN
 	fi
 
 	echo $message
@@ -285,7 +285,8 @@ function check_SystemHardwareInfo(){
 	details=""
 	state=$STATE_UNKNOWN
 	
-	if total=$(echo $jsonResult | jq '.SystemHardwareList | length'); then
+	my_verbose "$jsonResult"
+	if total=$(echo $jsonResult | jq '.SystemHardwareList | length' 2>/dev/null); then
 		if [ $total -gt 0 ]; then
 			state=$STATE_OK
 			for (( index=0; index<${total}; index++ )); do
@@ -307,12 +308,12 @@ function check_SystemHardwareInfo(){
 				message="WARNING: ${alerts} of ${total} network interfaces are in warning state"
 			fi
 		else
-			$message="OK: No network interfaces detected"
-			$state=$STATE_UNKNOWN
+			message="OK: No network interfaces detected"
+			state=$STATE_UNKNOWN
 		fi
 	else
-		$message="UNKNOWN: Error parsing json"
-		$state=$STATE_UNKNOWN
+		message="UNKNOWN: Error parsing json"
+		state=$STATE_UNKNOWN
 	fi
 
 	echo $message
